@@ -94,36 +94,28 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
 
     @Override
     public List<BuildingEntity> findAllBuildings(BuildingSearchBuilder builder, Pageable pageable) {
-        StringBuilder sql = new StringBuilder("SELECT b.* FROM building b ");
-
-        queryJoin(builder, sql);
-
-        StringBuilder where = new StringBuilder("WHERE 1=1");
-
-        queryWhereNormal(builder, where);
-
-        queryWhereSpecial(builder, where);
-
-        sql.append(where);
-
-        sql.append(" GROUP BY b.id ");
-
-        Query query = entityManager.createNativeQuery(sql.toString(), BuildingEntity.class);
-
+        String sql = buildQueryFilter(builder);
+        Query query = entityManager.createNativeQuery(sql, BuildingEntity.class);
 
         return query.getResultList();
     }
 
     @Override
-    public int countTotalItem() {
-        String sql = buildQueryFilter();
+    public int countTotalItem(BuildingSearchBuilder builder) {
+        String sql = buildQueryFilter(builder);
         Query query = entityManager.createNativeQuery(sql);
         return query.getResultList().size();
     }
 
-    private String buildQueryFilter() {
-        String sql = "SELECT * FROM building b WHERE 1 = 1 ";
-        return sql;
+    private String buildQueryFilter(BuildingSearchBuilder builder) {
+        StringBuilder sql = new StringBuilder("SELECT b.* FROM building b ");
+        queryJoin(builder, sql);
+        StringBuilder where = new StringBuilder("WHERE 1=1");
+        queryWhereNormal(builder, where);
+        queryWhereSpecial(builder, where);
+        sql.append(where);
+        sql.append(" GROUP BY b.id ");
+        return sql.toString();
     }
 
 

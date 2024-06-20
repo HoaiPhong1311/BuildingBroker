@@ -82,6 +82,9 @@
 						<li class><a class="nav-link" href="<c:url value='/login'/>">Đăng nhập</a></li>
 						<li class="nav-item"><a class="nav-link" href="#">Đăng ký</a></li>
 					</security:authorize>
+						<security:authorize access="hasAnyRole('STAFF', 'MANAGER')">
+							<li class><a class="nav-link" href="<c:url value='/admin/home'/>">Admin</a></li>
+						</security:authorize>
 					<security:authorize access = "isAuthenticated()">
 						<li class="nav-item"><a class="nav-link" href="#"> Xin chào <%=SecurityUtils.getPrincipal().getUsername()%></a></li>
 						<li class="nav-item"><a class="nav-link" href="<c:url value='/logout'/>">Thoát</a></li>

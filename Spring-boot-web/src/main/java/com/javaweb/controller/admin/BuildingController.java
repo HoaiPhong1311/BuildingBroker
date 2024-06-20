@@ -55,7 +55,7 @@ public class BuildingController {
         }
         BuildingSearchResponse buildingSearchResponse = new BuildingSearchResponse();
         buildingSearchResponse.setListResult(result);
-        buildingSearchResponse.setTotalItems(buildingService.countTotalItems());
+        buildingSearchResponse.setTotalItems(buildingService.countTotalItems(requestParam, typeCodes));
         mav.addObject("buildingList", buildingSearchResponse);
         mav.addObject("result", result);
         return mav;

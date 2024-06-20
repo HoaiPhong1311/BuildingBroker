@@ -154,8 +154,9 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public int countTotalItems() {
-        return buildingRepository.countTotalItem();
+    public int countTotalItems(Map<String, Object> requestParam, List<String> typeCode) {
+        BuildingSearchBuilder buildingSearchBuilder = buildingSearchBuilderConverter.toBuildingSearchBuilder(requestParam, typeCode);
+        return buildingRepository.countTotalItem(buildingSearchBuilder);
     }
 
     private void saveThumbnail(BuildingDTO buildingDTO, BuildingEntity buildingEntity) {

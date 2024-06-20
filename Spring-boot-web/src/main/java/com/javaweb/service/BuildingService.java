@@ -23,6 +23,6 @@ public interface BuildingService {
 
     void saveOrUpdateBuilding(Long id, BuildingDTO buildingDTO);
 
-    int countTotalItems();
+    int countTotalItems(Map<String, Object> requestParam, List<String> typeCode);
 
 }
