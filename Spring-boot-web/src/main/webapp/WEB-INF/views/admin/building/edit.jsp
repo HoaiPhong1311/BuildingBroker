@@ -228,9 +228,11 @@
                                             </button>
                                         </c:if>
                                         <c:if test="${not empty buildingEdit.id}">
-                                            <button type="button" class="btn btn-warning" id="btnAddOrUpdateBuilding" value="0">
-                                                Sửa tòa nhà
-                                            </button>
+                                            <security:authorize access="hasRole('MANAGER')">
+                                                <button type="button" class="btn btn-warning" id="btnAddOrUpdateBuilding" value="0">
+                                                    Sửa tòa nhà
+                                                </button>
+                                            </security:authorize>
                                         </c:if>
                                         <a class="btn btn-primary" href="/admin/building-list">
                                             Hủy thao tác

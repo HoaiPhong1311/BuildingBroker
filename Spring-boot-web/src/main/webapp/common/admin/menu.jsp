@@ -83,24 +83,26 @@
         </li>
     </ul>
 
-    <ul class="nav nav-list">
-        <li class="">
-            <a href="#" class="dropdown-toggle">
-                <i class="menu-icon fa fas fa-users"></i>
-                <span class="menu-text">Quản Lý Tài Khoản</span>
-            </a>
-            <b class="arrow"></b>
-            <ul class="submenu">
-                <li class="">
-                    <a href='/admin/user-list'>
-                        <i class="menu-icon fa fa-caret-right"></i>
-                        Danh sách tài khoản
-                    </a>
-                    <b class="arrow"></b>
-                </li>
-            </ul>
-        </li>
-    </ul>
+    <security:authorize access="hasRole('MANAGER')">
+        <ul class="nav nav-list">
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fas fa-users"></i>
+                    <span class="menu-text">Quản Lý Tài Khoản</span>
+                </a>
+                <b class="arrow"></b>
+                <ul class="submenu">
+                    <li class="">
+                        <a href='/admin/user-list'>
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            Danh sách tài khoản
+                        </a>
+                        <b class="arrow"></b>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </security:authorize>
 
 <%--    <ul class="nav nav-list">--%>
 <%--        <li class="">--%>

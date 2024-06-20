@@ -172,7 +172,7 @@
                 window.location.href = "<c:url value='/admin/user-edit-"+res.id+"?message=reset_password_success'/>";
             },
             error: function (res) {
-                window.location.href = "<c:url value='/admin/user-edit-"+id+"?message=error_system'/>";
+                window.location.href = "<c:url value='/admin/user-edit?message=error_system'/>";
             }
         });
     }

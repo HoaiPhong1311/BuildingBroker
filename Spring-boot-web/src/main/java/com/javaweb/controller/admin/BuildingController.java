@@ -7,6 +7,7 @@ import com.javaweb.enums.typeCode;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
+import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.BuildingService;
 import com.javaweb.service.IUserService;
 import com.javaweb.utils.DisplayTagUtils;
@@ -43,7 +44,15 @@ public class BuildingController {
 
         DisplayTagUtils.of(request, buildingSearchRequest);
         Pageable pageable = PageRequest.of(buildingSearchRequest.getPage() - 1, buildingSearchRequest.getMaxPageItems());
-        List<BuildingSearchResponse> result = buildingService.findAll(requestParam, typeCodes, pageable);
+        List<BuildingSearchResponse> result = new ArrayList<>();
+        if(SecurityUtils.getAuthorities().contains("ROLE_STAFF")){
+            Long staffId = SecurityUtils.getPrincipal().getId();
+            requestParam.put("staffId", staffId);
+            result = buildingService.findAll(requestParam, typeCodes, pageable);
+        }
+        else{
+            result = buildingService.findAll(requestParam, typeCodes, pageable);
+        }
         BuildingSearchResponse buildingSearchResponse = new BuildingSearchResponse();
         buildingSearchResponse.setListResult(result);
         buildingSearchResponse.setTotalItems(buildingService.countTotalItems());

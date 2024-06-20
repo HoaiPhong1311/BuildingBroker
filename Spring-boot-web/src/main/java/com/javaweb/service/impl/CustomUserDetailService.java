@@ -30,7 +30,7 @@ public class CustomUserDetailService implements UserDetailsService {
         }
         List<GrantedAuthority> authorities = new ArrayList<>();
         for(RoleDTO role: userDTO.getRoles()){
-            authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getCode()));
+            authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getCode())); // ROLE_STAFF
         }
         MyUserDetail myUserDetail = new MyUserDetail(name,userDTO.getPassword(),true,true,true,true,authorities);
         BeanUtils.copyProperties(userDTO, myUserDetail);
