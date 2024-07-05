@@ -13,11 +13,11 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> , UserRepositoryCustom {
 
-//    @Query("SELECT ab.staffId from AssignmentBuildingEntity ab WHERE ab.buildingId = :buildingid")
-//    List<Long> findByBuildingId(@Param("buildingid") Long buildingid);
-
     @Query("SELECT u FROM UserEntity u JOIN u.buildings b WHERE b.id = :buildingid")
     List<UserEntity> findStaffByBuildingId(@Param("buildingid") Long buildingid);
+
+    @Query("SELECT u FROM UserEntity u JOIN u.customers c WHERE c.id = :customerid")
+    List<UserEntity> findStaffByCustomerId(@Param("customerid") Long customerid);
 
     List<UserEntity> findByIdIn(List<Long> ids);
 

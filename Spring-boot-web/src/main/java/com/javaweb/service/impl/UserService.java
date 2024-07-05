@@ -113,6 +113,28 @@ public class UserService implements IUserService {
         return result;
     }
 
+    @Override
+    public ResponseDTO loadstaffByCustomer(Long customerId) {
+        List<UserEntity> staffList = userRepository.findByStatusAndRoles_Code(1, "STAFF");
+        List<UserEntity> managingStaff = userRepository.findStaffByCustomerId(customerId);
+
+        List<Long> managingStaffIds = managingStaff.stream().map(UserEntity::getId).collect(Collectors.toList());
+
+        List<StaffResponseDTO> staffAssignment = new ArrayList<>();
+        for(UserEntity it : staffList) {
+            StaffResponseDTO dto = new StaffResponseDTO();
+            dto.setStaffId(it.getId());
+            dto.setFullName(it.getFullName());
+            dto.setChecked(managingStaffIds.contains(it.getId()) ? "checked" : "");
+            staffAssignment.add(dto);
+        }
+
+        ResponseDTO result = new ResponseDTO();
+        result.setData(staffAssignment);
+        result.setMessage("Success");
+        return result;
+    }
+
 
     @Override
     public int getTotalItems(String searchValue) {

@@ -29,4 +29,5 @@ public interface IUserService {
     int countTotalItems();
     Map<Long, String> getStaffs();
     ResponseDTO loadStaffByBuilding(Long buildingId);
+    ResponseDTO loadstaffByCustomer(Long customerId);
 }

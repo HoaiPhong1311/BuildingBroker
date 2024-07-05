@@ -119,7 +119,6 @@ public class BuildingServiceImpl implements BuildingService {
     @Transactional
     public void saveOrUpdateBuilding(Long id, BuildingDTO buildingDTO) {
         BuildingEntity building;
-        Long buildingId = buildingDTO.getId();
 
         if (id == null) {
             building = buildingConverter.toBuildingEntity(buildingDTO);

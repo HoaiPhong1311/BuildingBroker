@@ -13,28 +13,29 @@
         <div class="main-content-inner">
             <div class="breadcrumbs" id="breadcrumbs">
                 <script type="text/javascript">
-                    try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+                    try {
+                        ace.settings.check('breadcrumbs', 'fixed')
+                    } catch (e) {
+                    }
                 </script>
 
                 <ul class="breadcrumb">
                     <li>
                         <i class="ace-icon fa fa-home home-icon"></i>
-                        <a href="#">Home</a>
+                        <a href="<c:url value="/admin/home"/>">
+                            <%--<spring:message code="label.home"/>--%>
+                            Trang chủ
+                        </a>
                     </li>
-
-                    <li>
-                        <a href="#">UI &amp; Elements</a>
+                    <li class="active">
+                        <%--<spring:message code="label.user.list"/>--%>
+                        Danh sách tòa nhà
                     </li>
-                    <li class="active">Content Sliders</li>
-                </ul><!-- /.breadcrumb -->
+                </ul>
+                <!-- /.breadcrumb -->
             </div>
 
             <div class="page-content" style="font-family: Arial, Helvetica, sans-serif;">
-                <div class="page-header">
-                    <h1>Danh sách tòa nhà
-                    </h1>
-                </div><!-- /.page-header -->
-
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="widget-box">

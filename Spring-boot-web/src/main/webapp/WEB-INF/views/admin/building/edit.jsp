@@ -13,20 +13,26 @@
         <div class="main-content-inner">
             <div class="breadcrumbs" id="breadcrumbs">
                 <script type="text/javascript">
-                    try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+                    try {
+                        ace.settings.check('breadcrumbs', 'fixed')
+                    } catch (e) {
+                    }
                 </script>
 
                 <ul class="breadcrumb">
                     <li>
                         <i class="ace-icon fa fa-home home-icon"></i>
-                        <a href="#">Home</a>
+                        <a href="<c:url value="/admin/home"/>">
+                            <%--<spring:message code="label.home"/>--%>
+                            Trang chủ
+                        </a>
                     </li>
-
-                    <li>
-                        <a href="#">UI &amp; Elements</a>
+                    <li class="active">
+                        <%--<spring:message code="label.user.list"/>--%>
+                        Thông tin tòa nhà
                     </li>
-                    <li class="active">Content Sliders</li>
-                </ul><!-- /.breadcrumb -->
+                </ul>
+                <!-- /.breadcrumb -->
             </div>
 
             <div class="page-content" style="font-family: Arial, Helvetica, sans-serif;">
@@ -220,7 +226,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-xs-3" for=""></label>
+                                    <label class="col-xs-3" ></label>
                                     <div class="col-xs-9">
                                         <c:if test="${empty buildingEdit.id}">
                                             <button type="button" class="btn btn-primary" id="btnAddOrUpdateBuilding" value="1">

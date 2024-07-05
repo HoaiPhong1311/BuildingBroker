@@ -20,6 +20,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
+
     public void queryJoin(BuildingSearchBuilder builder, StringBuilder sql){
         Long staffId = builder.getStaffId();
         if(staffId != null) {
@@ -96,7 +97,6 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
     public List<BuildingEntity> findAllBuildings(BuildingSearchBuilder builder, Pageable pageable) {
         String sql = buildQueryFilter(builder);
         Query query = entityManager.createNativeQuery(sql, BuildingEntity.class);
-
         return query.getResultList();
     }
 
