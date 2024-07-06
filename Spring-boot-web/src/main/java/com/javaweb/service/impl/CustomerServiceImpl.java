@@ -8,6 +8,7 @@ import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.AssignmentCustomerDTO;
 import com.javaweb.model.dto.CustomerDTO;
+import com.javaweb.model.dto.UserDTO;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.repository.CustomerRepository;
 import com.javaweb.repository.UserRepository;
@@ -15,6 +16,9 @@ import com.javaweb.service.CustomerService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public void saveOrUpdateCustomer(Long id, CustomerDTO customerDTO) {
+    public Long saveOrUpdateCustomer(Long id, CustomerDTO customerDTO) {
         CustomerEntity customer;
 
         if(id == null){
@@ -66,6 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
             BeanUtils.copyProperties(customerDTO, customer, "id", "createdBy", "createdDate", "activeStatus");
         }
         customerRepository.save(customer);
+        return customer.getId();
     }
 
     @Override
@@ -99,6 +104,33 @@ public class CustomerServiceImpl implements CustomerService {
         ResponseDTO response = new ResponseDTO();
         response.setMessage("Giao khách hàng thành công");
         return response;
+    }
+
+    public boolean canEditCustomer(Long id, String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if ("ROLE_MANAGER".equals(authority.getAuthority())) {
+                return true;
+            }
+        }
+
+        CustomerEntity customer = customerRepository.findById(id).orElse(null);
+        if (customer == null) {
+            return false;
+        }
+
+        for (UserEntity staff : customer.getUserCus()) {
+            if (staff.getUserName().equals(username)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

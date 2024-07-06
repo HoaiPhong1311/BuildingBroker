@@ -14,11 +14,13 @@ public interface CustomerService {
 
     int countTotalItems(Map<String, Object> requestParam);
 
-    void saveOrUpdateCustomer(Long id, CustomerDTO customerDTO);
+    Long saveOrUpdateCustomer(Long id, CustomerDTO customerDTO);
 
     CustomerDTO prepareCustomer(Long id);
 
     void deleteCustomer(Long[] ids);
 
     ResponseDTO assignCustomerToStaff(AssignmentCustomerDTO assignmentCustomerDTO);
+
+    boolean canEditCustomer(Long id, String name);
 }

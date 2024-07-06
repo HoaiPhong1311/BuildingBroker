@@ -18,6 +18,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -75,8 +82,19 @@ public class CustomerController {
         return mav;
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER') or @customerServiceImpl.canEditCustomer(#id, authentication.name)")
     @GetMapping(value = "/admin/customer-edit-{id}")
     public ModelAndView addCustomer(@PathVariable Long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+
+            if (!customerService.canEditCustomer(id, username)) {
+                throw new AccessDeniedException("Bạn không có quyền chỉnh sửa khách hàng này");
+            }
+        }
+
         ModelAndView mav = new ModelAndView("admin/customer/edit");
 
         CustomerDTO customerDTO = customerService.prepareCustomer(id);
