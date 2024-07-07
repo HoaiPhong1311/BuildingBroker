@@ -21,7 +21,7 @@ public class CustomerEntity {
     private String fullName;
 
     @Column(name = "phone")
-    private String phone;
+    private String customerPhone;
 
     @Column(name = "email")
     private String email;

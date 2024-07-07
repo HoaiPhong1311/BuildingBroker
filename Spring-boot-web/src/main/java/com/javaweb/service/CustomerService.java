@@ -14,7 +14,7 @@ public interface CustomerService {
 
     int countTotalItems(Map<String, Object> requestParam);
 
-    Long saveOrUpdateCustomer(Long id, CustomerDTO customerDTO);
+    void saveOrUpdateCustomer(Long id, CustomerDTO customerDTO);
 
     CustomerDTO prepareCustomer(Long id);
 

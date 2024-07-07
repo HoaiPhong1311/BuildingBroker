@@ -32,30 +32,26 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     public void addOrUpdateTransaction(TransactionDTO transaction) {
         TransactionEntity transactionEntity;
-        if(transaction.getId()==null){
-            transactionEntity = new TransactionEntity();
-            transactionEntity.setCreatedDate(new Date());
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if(authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            if (transaction.getId() == null) {
+                transactionEntity = new TransactionEntity();
+                transactionEntity.setCreatedDate(new Date());
                 transactionEntity.setCreatedBy(userDetails.getUsername());
                 transactionEntity.setCustomerId(transaction.getCustomerId());
                 transactionEntity.setCode(transaction.getCode());
-            }
-        }
-        else{
-            transactionEntity = transactionRepository.findById(transaction.getId()).orElse(new TransactionEntity());
-            transactionEntity.setModifiedDate(new Date());
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if(authentication != null && authentication.getPrincipal() instanceof UserDetails){
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            } else {
+                transactionEntity = transactionRepository.findById(transaction.getId()).get();
+                transactionEntity.setModifiedDate(new Date());
                 transactionEntity.setModifiedBy(userDetails.getUsername());
             }
+
+            transactionEntity.setTransactionDetail(transaction.getTransactionDetail());
+            transactionRepository.save(transactionEntity);
+
         }
-
-        transactionEntity.setTransactionDetail(transaction.getTransactionDetail());
-
-        transactionRepository.save(transactionEntity);
     }
 
     @Override

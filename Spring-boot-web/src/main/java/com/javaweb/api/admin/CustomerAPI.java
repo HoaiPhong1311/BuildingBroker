@@ -43,47 +43,14 @@ public class CustomerAPI {
 
     @PostMapping
     public String addCustomer(@RequestBody CustomerDTO customerDTO){
-        customerDTO.setCreatedDate(new Date());
-        customerDTO.setActiveStatus("1");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null && authentication.getPrincipal() instanceof UserDetails){
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            customerDTO.setCreatedBy(userDetails.getUsername());
-
-            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-            boolean isManager = authorities.contains(new SimpleGrantedAuthority("ROLE_MANAGER"));
-            boolean isStaff = authorities.contains(new SimpleGrantedAuthority("ROLE_STAFF"));
-
-            Long customerId = customerService.saveOrUpdateCustomer(null, customerDTO);
-
-            if(isStaff){
-                UserEntity userEntity = userRepository.findOneByUserName(userDetails.getUsername());
-                AssignmentCustomerDTO assignmentCustomerDTO = new AssignmentCustomerDTO();
-                assignmentCustomerDTO.setCustomerId(customerId);
-                assignmentCustomerDTO.setStaffs(Collections.singletonList(userEntity.getId()));
-                customerService.assignCustomerToStaff(assignmentCustomerDTO);
-            }
-
-            return new String("Add Customer Success");
-        }
-        else {
-            customerDTO.setStatus("Chưa xử lý");
-            customerDTO.setCreatedBy("Anonymous");
-            customerService.saveOrUpdateCustomer(null, customerDTO);
-            return new String("Gửi thông tin thành công");
-        }
+        customerService.saveOrUpdateCustomer(null, customerDTO);
+        return "Add Customer Success";
     }
 
     @PostMapping("/{id}")
     public String updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO){
-        customerDTO.setModifiedDate(new Date());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null && authentication.getPrincipal() instanceof UserDetails){
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            customerDTO.setModifiedBy(userDetails.getUsername());
-        }
         customerService.saveOrUpdateCustomer(id, customerDTO);
-        return new String("Update Customer Success");
+        return "Update Customer Success";
     }
 
     @DeleteMapping("/{ids}")

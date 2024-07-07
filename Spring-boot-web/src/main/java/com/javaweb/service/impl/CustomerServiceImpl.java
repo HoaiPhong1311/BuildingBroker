@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     UserRepository userRepository;
+
 
     @Override
     public List<CustomerDTO> findAllCustomers(Map<String, Object> requestParam, Pageable pageable) {
@@ -59,18 +62,47 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public Long saveOrUpdateCustomer(Long id, CustomerDTO customerDTO) {
-        CustomerEntity customer;
+    public void saveOrUpdateCustomer(Long id, CustomerDTO customerDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        if(id == null){
-            customer = customerConverter.convertToEntity(customerDTO);
+            if (id == null) {
+                customerDTO.setCreatedDate(new Date());
+                customerDTO.setActiveStatus("1");
+                customerDTO.setCreatedBy(userDetails.getUsername());
+            } else {
+                customerDTO.setModifiedDate(new Date());
+                customerDTO.setModifiedBy(userDetails.getUsername());
+            }
+
+            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+            boolean isManager = authorities.contains(new SimpleGrantedAuthority("ROLE_MANAGER"));
+            boolean isStaff = authorities.contains(new SimpleGrantedAuthority("ROLE_STAFF"));
+
+            CustomerEntity customer;
+            if (id == null) {
+                customer = customerConverter.convertToEntity(customerDTO);
+                customerRepository.save(customer);
+                id = customer.getId();
+            } else {
+                customer = customerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+                BeanUtils.copyProperties(customerDTO, customer, "id", "createdBy", "createdDate", "activeStatus");
+                customerRepository.save(customer);
+            }
+
+            if (isStaff && id != null) {
+                UserEntity userEntity = userRepository.findOneByUserName(userDetails.getUsername());
+                AssignmentCustomerDTO assignmentCustomerDTO = new AssignmentCustomerDTO();
+                assignmentCustomerDTO.setCustomerId(id);
+                assignmentCustomerDTO.setStaffs(Collections.singletonList(userEntity.getId()));
+                assignCustomerToStaff(assignmentCustomerDTO);
+            }
+        } else {
+            customerDTO.setStatus("Chưa xử lý");
+            customerDTO.setCreatedBy("Anonymous");
+            customerRepository.save(customerConverter.convertToEntity(customerDTO));
         }
-        else{
-            customer = customerRepository.findById(id).get();
-            BeanUtils.copyProperties(customerDTO, customer, "id", "createdBy", "createdDate", "activeStatus");
-        }
-        customerRepository.save(customer);
-        return customer.getId();
     }
 
     @Override
